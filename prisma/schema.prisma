@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model attachments {
+  id          String    @id(map: "PK__attachme__3213E83FD0A23DF5") @default(dbgenerated("newid()"), map: "DF__attachments__id__18EBB532") @db.UniqueIdentifier
+  entity_type String    @db.NVarChar(50)
+  entity_id   String    @db.UniqueIdentifier
+  file_name   String    @db.NVarChar(255)
+  file_path   String    @db.NVarChar(500)
+  uploaded_by String    @db.UniqueIdentifier
+  uploaded_at DateTime? @default(now(), map: "DF__attachmen__uploa__1AD3FDA4") @db.DateTime
+  users       users     @relation(fields: [uploaded_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_attachments_user")
+}
+
+model audit_logs {
+  id           String    @id(map: "PK__audit_lo__3213E83F4C6CCB91") @default(dbgenerated("newid()"), map: "DF__audit_logs__id__245D67DE") @db.UniqueIdentifier
+  entity_type  String    @db.NVarChar(50)
+  entity_id    String    @db.UniqueIdentifier
+  action       String    @db.NVarChar(50)
+  performed_by String    @db.UniqueIdentifier
+  performed_at DateTime? @default(now(), map: "DF__audit_log__perfo__2739D489") @db.DateTime
+  changes      String?   @db.NVarChar(Max)
+  users        users     @relation(fields: [performed_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_audit_logs_user")
+}
+
+model clients {
+  id                String     @id(map: "PK__clients__3213E83F3CE5380E") @default(dbgenerated("newid()"), map: "DF__clients__id__4AB81AF0") @db.UniqueIdentifier
+  company_name      String     @db.NVarChar(255)
+  client_type       String     @db.NVarChar(255)
+  pan_number        String     @unique(map: "UQ__clients__9C445950BF443DAC") @db.NVarChar(50)
+  is_active         Boolean
+  contact_person    String     @db.NVarChar(255)
+  mailing_country   String     @db.NVarChar(100)
+  mailing_street    String     @db.NVarChar(255)
+  mailing_city      String     @db.NVarChar(100)
+  mailing_state     String     @db.NVarChar(100)
+  mailing_zip_code  String     @db.NVarChar(50)
+  mailing_phone     String?    @db.NVarChar(50)
+  mailing_mobile    String?    @db.NVarChar(50)
+  mailing_fax       String?    @db.NVarChar(50)
+  mailing_email     String     @db.NVarChar(255)
+  same_as_mailing   Boolean
+  billing_attention String?    @db.NVarChar(255)
+  billing_country   String?    @db.NVarChar(100)
+  billing_street    String?    @db.NVarChar(255)
+  billing_city      String?    @db.NVarChar(100)
+  billing_state     String?    @db.NVarChar(100)
+  billing_zip_code  String?    @db.NVarChar(50)
+  billing_phone     String?    @db.NVarChar(50)
+  billing_mobile    String?    @db.NVarChar(50)
+  billing_fax       String?    @db.NVarChar(50)
+  billing_email     String?    @db.NVarChar(255)
+  created_at        DateTime?  @default(now(), map: "DF__clients__created__4D94879B") @db.DateTime
+  updated_at        DateTime?  @default(now(), map: "DF__clients__updated__4E88ABD4") @db.DateTime
+  projects          projects[]
+}
+
+model departments {
+  id               String             @id(map: "PK__departme__3213E83F22BA3634") @default(dbgenerated("newid()"), map: "DF__departments__id__619B8048") @db.UniqueIdentifier
+  name             String             @unique(map: "UQ__departme__72E12F1B96190285") @db.NVarChar(255)
+  description      String?            @db.NVarChar(500)
+  created_at       DateTime?          @default(now(), map: "DF__departmen__creat__628FA481") @db.DateTime
+  updated_at       DateTime?          @default(now(), map: "DF__departmen__updat__6383C8BA") @db.DateTime
+  employee_details employee_details[]
+  project_managers project_managers[]
+}
+
+model employee_details {
+  id              String       @id(map: "PK__employee__3213E83F9A21632D") @default(dbgenerated("newid()"), map: "DF__employee_det__id__339FAB6E") @db.UniqueIdentifier
+  user_id         String       @unique(map: "UQ__employee__B9BE370E5024E68E") @db.UniqueIdentifier
+  emp_id          String       @unique(map: "UQ__employee__1299A860B3E4EF35") @db.NVarChar(50)
+  first_name      String       @db.NVarChar(100)
+  last_name       String       @db.NVarChar(100)
+  department_id   String?      @db.UniqueIdentifier
+  designation     String?      @db.NVarChar(100)
+  date_of_joining DateTime?    @db.Date
+  date_of_birth   DateTime?    @db.Date
+  phone           String?      @db.NVarChar(20)
+  mobile          String?      @db.NVarChar(20)
+  status          String?      @default("active", map: "DF__employee___statu__3587F3E0") @db.NVarChar(50)
+  updated_at      DateTime?    @default(now(), map: "DF__employee___updat__367C1819") @db.DateTime
+  departments     departments? @relation(fields: [department_id], references: [id], onUpdate: NoAction, map: "fk_employee_department")
+  users           users        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_employee_user")
+}
+
+model notifications {
+  id         String    @id(map: "PK__notifica__3213E83FA12F5CE0") @default(dbgenerated("newid()"), map: "DF__notification__id__1EA48E88") @db.UniqueIdentifier
+  user_id    String    @db.UniqueIdentifier
+  message    String    @db.NVarChar(500)
+  is_read    Boolean?  @default(false, map: "DF__notificat__is_re__1F98B2C1")
+  created_at DateTime? @default(now(), map: "DF__notificat__creat__208CD6FA") @db.DateTime
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_notifications_user")
+}
+
+model project_managers {
+  id                                          String      @id(map: "PK__project___3213E83FBDA22E04") @default(dbgenerated("newid()"), map: "DF__project_mana__id__01142BA1") @db.UniqueIdentifier
+  project_id                                  String      @db.UniqueIdentifier
+  user_id                                     String      @db.UniqueIdentifier
+  department_id                               String      @db.UniqueIdentifier
+  consultant_id                               String?     @db.UniqueIdentifier
+  primary_contact_first_name                  String      @db.NVarChar(100)
+  primary_contact_last_name                   String      @db.NVarChar(100)
+  primary_contact_email                       String      @unique(map: "UQ__project___DBDFFF4164199B32") @db.NVarChar(255)
+  primary_contact_mobile                      String?     @db.NVarChar(20)
+  primary_contact_phone                       String?     @db.NVarChar(20)
+  document_path                               String?     @db.NVarChar(500)
+  assigned_at                                 DateTime?   @default(now(), map: "DF__project_m__assig__02084FDA") @db.DateTime
+  updated_at                                  DateTime?   @default(now(), map: "DF__project_m__updat__02FC7413") @db.DateTime
+  users_project_managers_consultant_idTousers users?      @relation("project_managers_consultant_idTousers", fields: [consultant_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_pm_consultant")
+  departments                                 departments @relation(fields: [department_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_pm_department")
+  projects                                    projects    @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_pm_project")
+  users_project_managers_user_idTousers       users       @relation("project_managers_user_idTousers", fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_pm_user")
+}
+
+model projects {
+  id                       String             @id(map: "PK__projects__3213E83F637E45CF") @default(dbgenerated("newid()"), map: "DF__projects__id__440B1D61") @db.UniqueIdentifier
+  project_code             String             @unique(map: "UQ__projects__891B3A6FE4D9F817") @db.NVarChar(255)
+  project_name             String             @db.NVarChar(255)
+  project_description      String             @db.Text
+  planned_start_date       DateTime           @db.Date
+  planned_end_date         DateTime           @db.Date
+  revised_planned_end_date DateTime?          @db.Date
+  actual_start_date        DateTime?          @db.Date
+  actual_end_date          DateTime?          @db.Date
+  contracted_efforts       String?            @db.NVarChar(255)
+  planned_efforts          String?            @db.NVarChar(255)
+  po_number                String?            @db.NVarChar(255)
+  po_amount                String?            @db.NVarChar(255)
+  currency                 String?            @db.NVarChar(50)
+  po_start_date            DateTime?          @db.Date
+  po_end_date              DateTime?          @db.Date
+  po_validity              String?            @db.NVarChar(255)
+  po_upliftment_details    String?            @db.NVarChar(Max)
+  comments                 String?            @db.NVarChar(Max)
+  status                   String             @db.NVarChar(50)
+  created_at               DateTime?          @default(now(), map: "DF__projects__create__45F365D3") @db.DateTime
+  updated_at               DateTime?          @default(now(), map: "DF__projects__update__46E78A0C") @db.DateTime
+  client_id                String?            @db.UniqueIdentifier
+  project_managers         project_managers[]
+  clients                  clients?           @relation(fields: [client_id], references: [id], onUpdate: NoAction, map: "fk_projects_client")
+  tasks                    tasks[]
+  work_logs                work_logs[]
+}
+
+model task_assignments {
+  id          String    @id(map: "PK__task_ass__3213E83FAA01D450") @default(dbgenerated("newid()"), map: "DF__task_assignm__id__5AEE82B9") @db.UniqueIdentifier
+  task_id     String    @db.UniqueIdentifier
+  user_id     String    @db.UniqueIdentifier
+  assigned_at DateTime? @default(now(), map: "DF__task_assi__assig__5BE2A6F2") @db.DateTime
+  tasks       tasks     @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_task_assignments_task")
+  users       users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_task_assignments_user")
+}
+
+model task_status_history {
+  id         String    @id(map: "PK__task_sta__3213E83FAEBC2D57") @default(dbgenerated("newid()"), map: "DF__task_status___id__2B0A656D") @db.UniqueIdentifier
+  task_id    String    @db.UniqueIdentifier
+  status     String    @db.NVarChar(50)
+  changed_by String    @db.UniqueIdentifier
+  changed_at DateTime? @default(now(), map: "DF__task_stat__chang__2CF2ADDF") @db.DateTime
+  tasks      tasks     @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_task_status_history_task")
+  users      users     @relation(fields: [changed_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_task_status_history_user")
+}
+
+model tasks {
+  id                  String                @id(map: "PK__tasks__3213E83F4A856E34") @default(dbgenerated("newid()"), map: "DF__tasks__id__52593CB8") @db.UniqueIdentifier
+  project_id          String                @db.UniqueIdentifier
+  title               String                @db.NVarChar(255)
+  description         String                @db.Text
+  status              String                @db.NVarChar(50)
+  priority            String                @db.NVarChar(50)
+  assigned_to         String?               @db.UniqueIdentifier
+  estimated_hours     Decimal?              @db.Decimal(5, 2)
+  start_date          DateTime?             @db.Date
+  due_date            DateTime?             @db.Date
+  created_at          DateTime?             @default(now(), map: "DF__tasks__created_a__5535A963") @db.DateTime
+  updated_at          DateTime?             @default(now(), map: "DF__tasks__updated_a__5629CD9C") @db.DateTime
+  task_assignments    task_assignments[]
+  task_status_history task_status_history[]
+  projects            projects              @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_tasks_project")
+  users               users?                @relation(fields: [assigned_to], references: [id], onUpdate: NoAction, map: "fk_tasks_user")
+  work_logs           work_logs[]
+}
+
+model users {
+  id                                                     String                @id(map: "PK__users__3213E83FC589475B") @default(dbgenerated("newid()"), map: "DF__users__id__3E52440B") @db.UniqueIdentifier
+  name                                                   String                @db.NVarChar(255)
+  email                                                  String                @unique(map: "UQ__users__AB6E616403CAE597") @db.NVarChar(255)
+  password_hash                                          String                @db.NVarChar(Max)
+  role                                                   String                @db.NVarChar(50)
+  created_at                                             DateTime?             @default(now(), map: "DF__users__created_a__403A8C7D") @db.DateTime
+  attachments                                            attachments[]
+  audit_logs                                             audit_logs[]
+  employee_details                                       employee_details?
+  notifications                                          notifications[]
+  project_managers_project_managers_consultant_idTousers project_managers[]    @relation("project_managers_consultant_idTousers")
+  project_managers_project_managers_user_idTousers       project_managers[]    @relation("project_managers_user_idTousers")
+  task_assignments                                       task_assignments[]
+  task_status_history                                    task_status_history[]
+  tasks                                                  tasks[]
+  work_logs                                              work_logs[]
+}
+
+model work_logs {
+  id           String   @id(map: "PK__work_log__3213E83FFF39462A") @default(dbgenerated("newid()"), map: "DF__work_logs__id__114A936A") @db.UniqueIdentifier
+  user_id      String   @db.UniqueIdentifier
+  project_id   String   @db.UniqueIdentifier
+  task_id      String?  @db.UniqueIdentifier
+  hours_worked Decimal  @db.Decimal(5, 2)
+  work_date    DateTime @default(now(), map: "DF__work_logs__work___1332DBDC") @db.Date
+  comments     String?  @db.NVarChar(255)
+  projects     projects @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_work_logs_project")
+  tasks        tasks?   @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_work_logs_task")
+  users        users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_work_logs_user")
+}

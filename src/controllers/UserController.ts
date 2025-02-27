@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import UserRepository from '../repositories/UserRepository';
-import { AuthenticatedRequest} from '../middleware/authMiddleware';
+import { AuthenticatedRequest} from '../types/RequestTypes';
 import logger from '../utils/logger';
 
 class UserController {

@@ -153,8 +153,8 @@ model task_assignments {
   task_id     String    @db.UniqueIdentifier
   user_id     String    @db.UniqueIdentifier
   assigned_at DateTime? @default(now(), map: "DF__task_assi__assig__5BE2A6F2") @db.DateTime
-  tasks       tasks     @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_task_assignments_task")
-  users       users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_task_assignments_user")
+  tasks       tasks     @relation(fields: [task_id], references: [id], onUpdate: NoAction, map: "fk_task_assignments_task")
+  users       users     @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "fk_task_assignments_user")
 }
 
 model task_status_history {
@@ -163,8 +163,8 @@ model task_status_history {
   status     String    @db.NVarChar(50)
   changed_by String    @db.UniqueIdentifier
   changed_at DateTime? @default(now(), map: "DF__task_stat__chang__2CF2ADDF") @db.DateTime
-  tasks      tasks     @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_task_status_history_task")
-  users      users     @relation(fields: [changed_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_task_status_history_user")
+  tasks      tasks     @relation(fields: [task_id], references: [id], onUpdate: NoAction, map: "fk_task_status_history_task")
+  users      users     @relation(fields: [changed_by], references: [id], onUpdate: NoAction, map: "fk_task_status_history_user")
 }
 
 model tasks {
@@ -180,10 +180,12 @@ model tasks {
   due_date            DateTime?             @db.Date
   created_at          DateTime?             @default(now(), map: "DF__tasks__created_a__5535A963") @db.DateTime
   updated_at          DateTime?             @default(now(), map: "DF__tasks__updated_a__5629CD9C") @db.DateTime
+  assigned_by         String?               @db.UniqueIdentifier
   task_assignments    task_assignments[]
   task_status_history task_status_history[]
   projects            projects              @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_tasks_project")
   users               users?                @relation(fields: [assigned_to], references: [id], onUpdate: NoAction, map: "fk_tasks_user")
+  tasks               users?                @relation("tasksTotasks", fields: [assigned_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tasks_tasks_FK")
   work_logs           work_logs[]
 }
 
@@ -203,6 +205,7 @@ model users {
   task_assignments                                       task_assignments[]
   task_status_history                                    task_status_history[]
   tasks                                                  tasks[]
+  other_tasks                                            tasks[]               @relation("tasksTotasks")
   work_logs                                              work_logs[]
 }
 

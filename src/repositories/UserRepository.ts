@@ -171,7 +171,7 @@ class UserRepository {
             return await prisma.task_assignments.findMany({
                 where: { user_id: userId },
                 select: {
-                    task_id: true,
+                    task_id: false,
                     assigned_at: true,
                     tasks: {
                         select: {

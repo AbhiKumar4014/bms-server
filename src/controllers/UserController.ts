@@ -131,6 +131,7 @@ class UserController {
                 assigned_at: task.assigned_at,
                 task: task.tasks ? {
                     id: task.tasks.id,
+                    title: task.tasks.title,
                     description: task.tasks.description,
                     status: task.tasks.status,
                     priority: task.tasks.priority,

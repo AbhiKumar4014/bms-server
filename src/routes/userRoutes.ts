@@ -7,6 +7,7 @@ const router = Router();
 
 router.get('/', authMiddleware, UserController.listUsers);
 router.get('/details', authMiddleware, UserController.getUser);
+router.get('/notifications', authMiddleware, UserController.getNotifications);
 router.post('/', authMiddleware,  UserController.createUser);
 router.put('/:id', authMiddleware, UserController.updateUser);
 router.delete('/:id', authMiddleware, UserController.deleteUser);

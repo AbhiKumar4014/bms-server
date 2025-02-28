@@ -8,11 +8,11 @@ class UserController {
         const id: string  = req.userId as string;
         try {
             const user = await UserRepository.getUserById(id);
-        if (user.role === "admin"){
-            const users = await UserRepository.getAllUsers();
-            res.json(users);
-        }
-        return res.status(403).json({ error: "don't have permission to access to this api." });
+            if (user.role === "admin"){
+                const users = await UserRepository.getAllUsers();
+                res.json(users);
+            }
+        return res.status(403).json({ error: "you don't have permission to access this." });
         } catch (error) {
             logger.error(`Error listing users: ${error.message}`);
             res.status(500).json({ error: 'Internal server error' });
@@ -61,6 +61,28 @@ class UserController {
             res.status(204).json({ message: 'User deleted successfully' });
         } catch (error) {
             logger.error(`Error deleting user: ${error.message}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+    async listUsersByRole(req: Request, res: Response) {
+        const { role } = req.query; // Get the role from query parameters
+        try {
+            const users = await UserRepository.getUsersByRole(role as string || "consultant"); // Fetch users by role
+            res.json(users);
+        } catch (error) {
+            logger.error(`Error listing users by role: ${error.message}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+    async getNotifications(req: AuthenticatedRequest, res: Response) {
+        const id: string  = req.userId as string;
+        try {
+            const notifications = await UserRepository.getNotifications(id);
+            res.json(notifications);
+        } catch (error) {
+            logger.error(`Error in getNotifications: ${error.message}`);
             res.status(500).json({ error: 'Internal server error' });
         }
     }

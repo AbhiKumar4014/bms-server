@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import ProjectRepository from '../repositories/ProjectRepository';
+import logger from '../utils/logger';
 
 class ProjectController {
     async listProjects(req: Request, res: Response) {
@@ -18,8 +19,13 @@ class ProjectController {
     }
 
     async createProject(req: Request, res: Response) {
-        const project = await ProjectRepository.createProject(req.body);
-        res.status(201).json(project);
+        try {
+            const project = await ProjectRepository.createProject(req.body);
+            res.status(201).json(project);
+        } catch (error) {
+            logger.error(error);
+            res.status(500).send('Error creating project');
+        }
     }
 
     async updateProject(req: Request, res: Response) {

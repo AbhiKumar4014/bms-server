@@ -15,7 +15,7 @@ class AuthController {
         }
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
-            const user = await UserRepository.createUser({name, email, password_hash: hashedPassword, role: role? role: "Consultant"});
+            const user = await UserRepository.createUser({name, email, password_hash: hashedPassword, role: role? role: "consultant"});
             res.status(201).json(user);
         } catch (error) {
             logger.error(`Error registering user: ${error.message}`);
@@ -46,7 +46,7 @@ class AuthController {
             const token = jwt.sign(
                 { id: user.id, role: user.role, email: user.email },
                 config.jwtSecretKey || "your_jwt_secret",
-                { expiresIn: "1h" }
+                { expiresIn: "10h" }
             );
             res.json({ message: 'Login successful', token });
         } catch (error) {

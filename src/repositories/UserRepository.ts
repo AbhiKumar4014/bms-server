@@ -16,9 +16,35 @@ class UserRepository {
         try {
             const user = await prisma.users.findUnique({
                 where: { id },
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                    created_at: true,
+                    employee_details: {
+                        select: {
+                            first_name: true,
+                            last_name: true,
+                            department_id: true,
+                            departments: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                            phone: true,
+                            mobile: true,
+                            designation: true,
+                            date_of_joining: true,
+                            date_of_birth: true,
+                            status: true,
+                            updated_at: true
+                        }
+                    }
+                }
             });
             return user;
-        } catch (error) {
+        } catch (error: any) {
             logger.error(`Error fetching user by ID: ${error.message}`);
             throw error;
         }
@@ -63,6 +89,49 @@ class UserRepository {
                 where: { email },
             });
         } catch (error) {
+            logger.error(`Error fetching user by email: ${error.message}`);
+            throw error;
+        }
+    }
+    async getUsersByRole(role: string) {
+        try {
+            return await prisma.users.findMany({
+                where: { role },
+            });
+        } catch (error) {
+            logger.error(`Error fetching user by email: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async getNotifications(userId: string) {
+        try {
+            return await prisma.notifications.findMany({
+                where: { user_id: userId },
+                select: {
+                    id: true,
+                    user_id: true,
+                    message: true,
+                    is_read: true,
+                    created_at: true,
+                    users: {
+                        select: {
+                            name: true,
+                            email: true,
+                            tasks: {
+                                select: {
+                                    id: true,
+                                    title: true,
+                                    description: true,
+                                    status: true,
+                                    created_at: true,
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } catch (error: any) {
             logger.error(`Error fetching user by email: ${error.message}`);
             throw error;
         }

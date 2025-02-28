@@ -1,6 +1,7 @@
 import express from 'express';
 import userRoutes from './routes/userRoutes';
 import clientRoutes from './routes/clientRoutes';
+import consultantRoutes from './routes/consultantRoutes';
 import projectRoutes from './routes/projectRoutes';
 import taskRoutes from './routes/taskRoutes';
 import departmentRoutes from './routes/departmentRoutes';
@@ -18,6 +19,7 @@ app.use(requestLogger);
 app.use(cors());
 
 app.use('/user', userRoutes);
+app.use('/consultant', consultantRoutes);
 app.use('/clients', clientRoutes);
 app.use('/projects', projectRoutes);
 app.use('/tasks', taskRoutes);

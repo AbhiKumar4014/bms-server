@@ -5,7 +5,38 @@ const prisma = new PrismaClient();
 
 class ProjectRepository {
     async getAllProjects() {
-        return await prisma.projects.findMany();
+        return await prisma.projects.findMany({
+            select: {
+                project_name: true,
+                project_code: true,
+                project_description: true,
+                planned_start_date: true,
+                planned_end_date: true,
+                revised_planned_end_date: true,
+                actual_start_date: true,
+                actual_end_date: true,
+                contracted_efforts: true,
+                planned_efforts: true,
+                po_number: true,
+                po_amount: true,
+                currency: true,
+                po_start_date: true,
+                po_end_date: true,
+                po_validity: true,
+                po_upliftment_details: true,
+                comments: true,
+                status: true,
+                created_at: true,
+                updated_at: true,
+                client_id: true,
+                clients: {
+                    select: {
+                        company_name: true,
+
+                    }
+                }
+            }
+        });
     }
 
     async getProjectById(id: string) {

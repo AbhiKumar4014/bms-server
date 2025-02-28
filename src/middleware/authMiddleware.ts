@@ -18,7 +18,7 @@ const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunc
 
     jwt.verify(token, config.jwtSecretKey || "your_jwt_secret", (err: any, decoded: any) => {
         if (err) {
-            res.status(403).json({ error: "Failed to authenticate token" });
+            res.status(403).json({ error: "Token expired, failed to authenticate" });
             return; // Ensure function exits after sending a response
         }
 

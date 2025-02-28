@@ -7,6 +7,7 @@ class ProjectRepository {
     async getAllProjects() {
         return await prisma.projects.findMany({
             select: {
+                id: true,
                 project_name: true,
                 project_code: true,
                 project_description: true,

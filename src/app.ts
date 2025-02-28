@@ -25,7 +25,7 @@ app.use('/projects', projectRoutes);
 app.use('/tasks', taskRoutes);
 app.use('/departments', departmentRoutes);
 app.use('/project-managers', projectManagerRoutes);
-app.use('/task-assignments', taskAssignmentRoutes);
+app.use('/task-assignment', taskAssignmentRoutes);
 app.use('/work-logs', workLogRoutes);
 app.use('/auth', authRoutes);
 

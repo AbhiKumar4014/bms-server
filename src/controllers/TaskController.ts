@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import TaskRepository from '../repositories/TaskRepository';
 import { AuthenticatedRequest } from '../types/RequestTypes';
+import logger from '../utils/logger';
 
 class TaskController {
     async listTasks(req: Request, res: Response) {
@@ -34,8 +35,17 @@ class TaskController {
 
     async updateTask(req: Request, res: Response) {
         const { id } = req.params;
-        const updatedTask = await TaskRepository.updateTask(id, req.body);
-        res.json(updatedTask);
+        try {
+            const updatedTask = await TaskRepository.updateTask(id, req.body);
+            res.json(updatedTask);
+        } catch (error) {
+            logger.error(error);
+            if (error instanceof Error) {
+                res.status(400).send(error.message);
+            } else {
+                res.status(500).send('An unexpected error occurred');
+            }
+        }
     }
 
     async deleteTask(req: Request, res: Response) {

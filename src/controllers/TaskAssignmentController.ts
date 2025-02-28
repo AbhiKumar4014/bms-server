@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import TaskAssignmentRepository from '../repositories/TaskAssignmentRepository';
 import { AuthenticatedRequest } from '../types/RequestTypes';
+import logger from '../utils/logger';
 
 class TaskAssignmentController {
     async listTaskAssignments(req: Request, res: Response) {
@@ -19,8 +20,17 @@ class TaskAssignmentController {
     }
 
     async createTaskAssignment(req: Request, res: Response) {
-        const taskAssignment = await TaskAssignmentRepository.createTaskAssignment(req.body);
-        res.status(201).json(taskAssignment);
+        try {
+            const taskAssignment = await TaskAssignmentRepository.createTaskAssignment(req.body);
+            res.status(201).json(taskAssignment);
+        } catch (error) {
+            logger.error(error?.message);
+            if (error instanceof Error) {
+                res.status(400).send({error: "Task already assigned!"});
+            } else {
+                res.status(500).send('An unexpected error occurred');
+            }
+        }
     }
 
     async updateTaskAssignment(req: Request, res: Response) {

@@ -112,7 +112,7 @@ class UserController {
     async createNotification(req: Request, res: Response) {
         // const userId: string = req.userId as string;
         try {
-            const userId  = req.body.id;
+            const userId  = req.body.user_id;
             const notification = await UserRepository.createNotification(userId, req?.body?.message as string);
             res.status(201).json(notification);
         } catch (error: any) {

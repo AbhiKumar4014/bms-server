@@ -149,12 +149,14 @@ model projects {
 }
 
 model task_assignments {
-  id          String    @id(map: "PK__task_ass__3213E83FAA01D450") @default(dbgenerated("newid()"), map: "DF__task_assignm__id__5AEE82B9") @db.UniqueIdentifier
+  id          String    @default(dbgenerated("newid()"), map: "DF__task_assignm__id__5AEE82B9") @db.UniqueIdentifier
   task_id     String    @db.UniqueIdentifier
   user_id     String    @db.UniqueIdentifier
   assigned_at DateTime? @default(now(), map: "DF__task_assi__assig__5BE2A6F2") @db.DateTime
   tasks       tasks     @relation(fields: [task_id], references: [id], onUpdate: NoAction, map: "fk_task_assignments_task")
   users       users     @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "fk_task_assignments_user")
+
+  @@id([task_id, user_id], map: "task_assignments_pk")
 }
 
 model task_status_history {

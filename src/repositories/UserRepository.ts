@@ -168,33 +168,39 @@ class UserRepository {
 
     async getAssignedTasks(userId: string) {
         try {
-            return await prisma.tasks.findMany({
-                where: { assigned_to: userId },
+            return await prisma.task_assignments.findMany({
+                where: { user_id: userId },
                 select: {
-                    id: true,
-                    title: true,
-                    description: true,
-                    status: true,
-                    priority: true,
-                    estimated_hours: true,
-                    start_date: true,
-                    due_date: true,
-                    created_at: true,
-                    updated_at: true,
-                    assigned_by: true,
-                    tasks: {  // Fetch assigner details (assigned_by)
+                    task_id: true,
+                    assigned_at: true,
+                    tasks: {
                         select: {
                             id: true,
-                            name: true,
-                            email: true
+                            title: true,
+                            description: true,
+                            status: true,
+                            priority: true,
+                            estimated_hours: true,
+                            start_date: true,
+                            due_date: true,
+                            created_at: true,
+                            updated_at: true,
+                            assigned_by: true, 
+                            tasks: {  // Fetch assigner details (assigned_by)
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    email: true
+                                }
+                            },
+                            projects: { // Fetch related project details
+                                select: {
+                                    id: true,
+                                    project_name: true
+                                }
+                            }
                         }
                     },
-                    projects: { // Fetch related project details
-                        select: {
-                            id: true,
-                            project_name: true
-                        }
-                    }
                 }
             });
         } catch (error: any) {
@@ -205,40 +211,39 @@ class UserRepository {
 
     async getAllAssignedTasks() {
         try {
-            return await prisma.tasks.findMany({
+            return await prisma.task_assignments.findMany({
                 select: {
-                    id: true,
-                    title: true,
-                    description: true,
-                    status: true,
-                    priority: true,
-                    estimated_hours: true,
-                    start_date: true,
-                    due_date: true,
-                    created_at: true,
-                    updated_at: true,
-                    assigned_to: true,
-                    assigned_by: true,
-                    users: {  // Fetch assignee details (assigned_to)
+                    user_id: true,
+                    task_id: true,
+                    assigned_at: true,
+                    tasks: {
                         select: {
                             id: true,
-                            name: true,
-                            email: true,
+                            title: true,
+                            description: true,
+                            status: true,
+                            priority: true,
+                            estimated_hours: true,
+                            start_date: true,
+                            due_date: true,
+                            created_at: true,
+                            updated_at: true,
+                            assigned_by: true, 
+                            tasks: {  // Fetch assigner details (assigned_by)
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    email: true
+                                }
+                            },
+                            projects: { // Fetch related project details
+                                select: {
+                                    id: true,
+                                    project_name: true
+                                }
+                            }
                         }
                     },
-                    tasks: {  // Fetch assigner details (assigned_by)
-                        select: {
-                            id: true,
-                            name: true,
-                            email: true
-                        }
-                    },
-                    projects: { // Fetch related project details
-                        select: {
-                            id: true,
-                            project_name: true
-                        }
-                    }
                 }
             });
         } catch (error: any) {

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import TaskRepository from '../repositories/TaskRepository';
+import { AuthenticatedRequest } from '../types/RequestTypes';
 
 class TaskController {
     async listTasks(req: Request, res: Response) {
@@ -17,9 +18,18 @@ class TaskController {
         }
     }
 
-    async createTask(req: Request, res: Response) {
-        const task = await TaskRepository.createTask(req.body);
-        res.status(201).json(task);
+    async createTask(req: AuthenticatedRequest, res: Response) {
+        const userId = req.userId;
+        try {
+            const task = await TaskRepository.createTask({assigned_by: userId, ...req?.body});
+            res.status(201).json(task);
+        } catch (error) {
+            if (error instanceof Error) {
+                res.status(400).send(error.message);
+            } else {
+                res.status(500).send('An unexpected error occurred');
+            }
+        }
     }
 
     async updateTask(req: Request, res: Response) {

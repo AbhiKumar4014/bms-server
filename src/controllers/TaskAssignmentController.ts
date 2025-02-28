@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import TaskAssignmentRepository from '../repositories/TaskAssignmentRepository';
+import { AuthenticatedRequest } from '../types/RequestTypes';
 
 class TaskAssignmentController {
     async listTaskAssignments(req: Request, res: Response) {

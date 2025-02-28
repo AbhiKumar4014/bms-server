@@ -107,28 +107,13 @@ class UserRepository {
     async getNotifications(userId: string) {
         try {
             return await prisma.notifications.findMany({
-                where: { user_id: userId },
+                where: { user_id: userId, is_read: false },
                 select: {
                     id: true,
                     user_id: true,
                     message: true,
                     is_read: true,
                     created_at: true,
-                    users: {
-                        select: {
-                            name: true,
-                            email: true,
-                            tasks: {
-                                select: {
-                                    id: true,
-                                    title: true,
-                                    description: true,
-                                    status: true,
-                                    created_at: true,
-                                }
-                            }
-                        }
-                    }
                 }
             });
         } catch (error: any) {
@@ -136,6 +121,133 @@ class UserRepository {
             throw error;
         }
     }
+    async updateNotification(id: string) {
+        try {
+            return await prisma.notifications.update({
+                where: { id },
+                data: { is_read: true },
+            });
+        } catch (error: any) {
+            logger.error(`Error fetching user by email: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async getNotificationsHistory(userId: string) {
+        try {
+            return await prisma.notifications.findMany({
+                where: { user_id: userId },
+                select: {
+                    id: true,
+                    user_id: true,
+                    message: true,
+                    is_read: true,
+                    created_at: true,
+                }
+            });
+        } catch (error: any) {
+            logger.error(`Error fetching user by email: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async createNotification (userId: string, message: string) {
+        try {
+            return await prisma.notifications.create({
+                data: {
+                    user_id: userId,
+                    message: message,
+                    is_read: false,
+                },
+            });
+        } catch (error: any) {
+            logger.error(`Error fetching user by email: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async getAssignedTasks(userId: string) {
+        try {
+            return await prisma.tasks.findMany({
+                where: { assigned_to: userId },
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    status: true,
+                    priority: true,
+                    estimated_hours: true,
+                    start_date: true,
+                    due_date: true,
+                    created_at: true,
+                    updated_at: true,
+                    assigned_by: true,
+                    tasks: {  // Fetch assigner details (assigned_by)
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true
+                        }
+                    },
+                    projects: { // Fetch related project details
+                        select: {
+                            id: true,
+                            project_name: true
+                        }
+                    }
+                }
+            });
+        } catch (error: any) {
+            logger.error(`Error fetching assigned tasks: ${error.message}`);
+            throw error;
+        }
+    }
+
+    async getAllAssignedTasks() {
+        try {
+            return await prisma.tasks.findMany({
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    status: true,
+                    priority: true,
+                    estimated_hours: true,
+                    start_date: true,
+                    due_date: true,
+                    created_at: true,
+                    updated_at: true,
+                    assigned_to: true,
+                    assigned_by: true,
+                    users: {  // Fetch assignee details (assigned_to)
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true,
+                        }
+                    },
+                    tasks: {  // Fetch assigner details (assigned_by)
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true
+                        }
+                    },
+                    projects: { // Fetch related project details
+                        select: {
+                            id: true,
+                            project_name: true
+                        }
+                    }
+                }
+            });
+        } catch (error: any) {
+            logger.error(`Error fetching assigned tasks: ${error.message}`);
+            throw error;
+        }
+    }
+    
+    
 }
 
 export default new UserRepository(); 

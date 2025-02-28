@@ -86,6 +86,61 @@ class UserController {
             res.status(500).json({ error: 'Internal server error' });
         }
     }
+
+    async getNotificationsHistory (req: AuthenticatedRequest, res: Response) {
+        const id: string  = req.userId as string;
+        try {
+            const notifications = await UserRepository.getNotificationsHistory(id);
+            res.json(notifications);
+        } catch (error) {
+            logger.error(`Error in getNotificationsHistory: ${error.message}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+    async updateNotification(req: Request, res: Response) {
+        const {id}  = req.params;
+        try {
+            const updatedNotification = await UserRepository.updateNotification(id);
+            res.json(updatedNotification);
+        } catch (error) {
+            logger.error(`Error updating notification: ${error.message}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+    
+    async createNotification(req: Request, res: Response) {
+        // const userId: string = req.userId as string;
+        try {
+            const userId  = req.body.id;
+            const notification = await UserRepository.createNotification(userId, req?.body?.message as string);
+            res.status(201).json(notification);
+        } catch (error: any) {
+            logger.error(`Error creating notification: ${error.message}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+    async getAssignedTasks(req: AuthenticatedRequest, res: Response) {
+        const id: string  = req.userId as string;
+        try {
+            const tasks = await UserRepository.getAssignedTasks(id);
+            res.json(tasks);
+        } catch (error) {
+            logger.error(`Error in getAssignedTasks: ${error.message}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
+    async getAllAssignedTasks(req: Request, res: Response) {
+        try {
+            const tasks = await UserRepository.getAllAssignedTasks();
+            res.json(tasks);
+        } catch (error) {
+            logger.error(`Error in getAssignedTasks: ${error.message}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 }
 
 export default new UserController(); 

@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import WorkLogRepository from '../repositories/WorkLogRepository';
+import { AuthenticatedRequest } from '../types/RequestTypes';
+import logger from '../utils/logger';
 
 class WorkLogController {
-    async listWorkLogs(req: Request, res: Response) {
-        const workLogs = await WorkLogRepository.getAllWorkLogs();
+    async listWorkLogs(req: AuthenticatedRequest, res: Response) {
+        const userId = req.userId as string;
+        const workLogs = await WorkLogRepository.getUserWorkLogs(userId);
         res.json(workLogs);
     }
 
@@ -17,9 +20,23 @@ class WorkLogController {
         }
     }
 
-    async createWorkLog(req: Request, res: Response) {
-        const workLog = await WorkLogRepository.createWorkLog(req.body);
-        res.status(201).json(workLog);
+    async createWorkLog(req: AuthenticatedRequest, res: Response) {
+        const userId = req.userId as string;
+        try {
+
+            const workLog = await WorkLogRepository.createWorkLog({
+                user_id: userId,
+                project_id: req.body?.project_id,
+                hours_worked: req.body.hours_worked,
+                work_date: req.body?.work_date,
+                task_id: req.body?.task_id,
+                comments: req.body?.comments,
+            });
+            res.status(201).json(workLog);
+        } catch (error) {
+            res.status(400).json({ error: error.message });
+            logger.error(error);
+        }
     }
 
     async updateWorkLog(req: Request, res: Response) {

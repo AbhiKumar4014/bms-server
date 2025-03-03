@@ -8,6 +8,22 @@ class WorkLogRepository {
         return await prisma.work_logs.findMany();
     }
 
+    async getUserWorkLogs(userId: string) {
+        return await prisma.work_logs.findMany({
+            where: { user_id: userId },
+            select: {
+                id: true,
+                user_id: true,
+                project_id: true,
+                task_id: true,
+                work_date: true,
+                hours_worked: true,
+                comments: true,
+                status: true,
+            },
+        });
+    }
+
     async getWorkLogById(id: string) {
         return await prisma.work_logs.findUnique({
             where: { id },

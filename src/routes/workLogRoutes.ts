@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import WorkLogController from '../controllers/WorkLogController';
 import validateUUID from '../middleware/validateUUID';
+import authMiddleware from '../middleware/authMiddleware';
 
 const router = Router();
 
-router.get('/', WorkLogController.listWorkLogs);
-router.get('/:id', validateUUID, WorkLogController.getWorkLog);
-router.post('/', WorkLogController.createWorkLog);
-router.put('/:id', validateUUID, WorkLogController.updateWorkLog);
-router.delete('/:id', validateUUID, WorkLogController.deleteWorkLog);
+router.get('/', authMiddleware, WorkLogController.listWorkLogs);
+router.get('/:id', authMiddleware, WorkLogController.getWorkLog);
+router.post('/', authMiddleware, WorkLogController.createWorkLog);
+router.put('/:id', authMiddleware, WorkLogController.updateWorkLog);
+router.delete('/:id', authMiddleware, WorkLogController.deleteWorkLog);
 
 export default router; 

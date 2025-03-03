@@ -24,6 +24,7 @@ class UserRepository {
                     created_at: true,
                     employee_details: {
                         select: {
+                            emp_id: true,
                             first_name: true,
                             last_name: true,
                             department_id: true,

@@ -127,9 +127,8 @@ class UserController {
             const tasks = await UserRepository.getAssignedTasks(id);
             return res.json(tasks.map(task => ({
                 user_id: task.user_id,
-                task_id: task.task_id,
-                assigned_at: task.assigned_at,
-                task: task.tasks ? {
+                // task_id: task.task_id,
+                // assigned_at: task?.assigned_at,
                     id: task.tasks.id,
                     title: task.tasks.title,
                     description: task.tasks.description,
@@ -142,7 +141,6 @@ class UserController {
                     updated_at: task.tasks.updated_at,
                     project: task.tasks.projects ? { ...task.tasks.projects } : null,
                     assigned_by: task.tasks.tasks ? { ...task.tasks.tasks } : null
-                } : null
             })));
         } catch (error) {
             logger.error(`Error in getAssignedTasks: ${error instanceof Error ? error.message : error}`);

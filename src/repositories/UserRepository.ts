@@ -172,7 +172,7 @@ class UserRepository {
                 where: { user_id: userId },
                 select: {
                     task_id: false,
-                    assigned_at: true,
+                    assigned_at: false,
                     tasks: {
                         select: {
                             id: true,

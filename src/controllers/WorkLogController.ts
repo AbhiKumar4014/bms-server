@@ -5,7 +5,10 @@ import logger from '../utils/logger';
 
 class WorkLogController {
     async listWorkLogs(req: AuthenticatedRequest, res: Response) {
-        const userId = req.userId as string;
+        let userId = req.userId as string;
+        if (req.query?.user_id) {
+            userId = req.query?.user_id as string;
+        }
         const workLogs = await WorkLogRepository.getUserWorkLogs(userId);
         res.json(workLogs);
     }
@@ -52,4 +55,4 @@ class WorkLogController {
     }
 }
 
-export default new WorkLogController(); 
+export default new WorkLogController();

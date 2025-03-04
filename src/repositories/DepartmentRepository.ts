@@ -32,6 +32,35 @@ class DepartmentRepository {
             where: { id },
         });
     }
+
+    async getDepartmentUsers(userId: string) {
+        const departmentData = await prisma.departments.findFirst({
+            where: {
+                employee_details: {
+                    some: {
+                        user_id: userId
+                    }
+                }
+            },
+            select: {
+                id: true,
+                name: true,
+                employee_details: {
+                    select: {
+                        first_name: true,
+                        last_name: true,
+                        user_id: true
+                    }
+                }
+            }
+        });
+        if (!departmentData) {
+            return [];
+        }
+
+        return departmentData;
+    }
+
 }
 
-export default new DepartmentRepository(); 
+export default new DepartmentRepository();

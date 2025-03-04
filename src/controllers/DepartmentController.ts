@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import DepartmentRepository from '../repositories/DepartmentRepository';
+import logger from '../utils/logger';
 
 class DepartmentController {
     async listDepartments(req: Request, res: Response) {
@@ -33,6 +34,17 @@ class DepartmentController {
         await DepartmentRepository.deleteDepartment(id);
         res.status(204).send();
     }
+
+    async getDepartmentUsers(req: Request, res: Response) {
+        const userId = req.userId;
+        try {
+            const users = await DepartmentRepository.getDepartmentUsers(userId);
+            res.json(users);
+        } catch (error) {
+            logger.error(`Error in getUsersByDepartment: ${error instanceof Error ? error.message : error}`);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
 }
 
-export default new DepartmentController(); 
+export default new DepartmentController();

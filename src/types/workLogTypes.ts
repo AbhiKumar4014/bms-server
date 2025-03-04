@@ -5,4 +5,6 @@ export interface WorkLogData {
     hours_worked: number;
     work_date: Date;
     comments?: string;
-} 
+    status?: string,
+    notes?: string
+}

@@ -16,8 +16,18 @@ class WorkLogRepository {
                 user_id: true,
                 project_id: true,
                 task_id: true,
+                tasks: {
+                    select: {
+                        id: true,
+                        title: true,
+                        description: true,
+                        project_id: true,
+                        status: true,
+                    }
+                },
                 work_date: true,
                 hours_worked: true,
+                notes: true,
                 comments: true,
                 status: true,
             },
@@ -50,4 +60,4 @@ class WorkLogRepository {
     }
 }
 
-export default new WorkLogRepository(); 
+export default new WorkLogRepository();

@@ -44,15 +44,32 @@ class UserController {
     }
 
     async updateUser(req: AuthenticatedRequest, res: Response) {
-        const id: string = req.userId as string;
+        // const id: string = req.userId as string;
         try {
-            const updatedUser = await UserRepository.updateUser(id, req.body);
-            res.json(updatedUser);
-        } catch (error) {
+            logger.info({ id: req?.body?.id, data: req.body, msg: "Update" });
+            
+            // Extract and delete the updateId from the request body safely
+            const { id: updateId, ...body } = req.body;
+            delete req.body.employee_details.departments;
+            logger.info({ id: req?.body?.id, data: req.body, msg: "Update" });
+    
+            // Build the updated data object with proper optional chaining
+            const updatedData = {
+                employee_details: {
+                    update: {
+                        ...req?.body?.employee_details,
+                    }
+                }
+            };
+            
+            const updatedUser = await UserRepository.updateUser(updateId, updatedData);
+            return res.json(updatedUser);
+        } catch (error: any) {
             logger.error(`Error updating user: ${error.message}`);
             res.status(500).json({ error: 'Internal server error' });
         }
     }
+    
 
     async deleteUser(req: AuthenticatedRequest, res: Response) {
         const id: string = req.userId as string;

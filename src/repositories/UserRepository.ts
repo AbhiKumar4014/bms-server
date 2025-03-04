@@ -5,7 +5,35 @@ import logger from '../utils/logger';
 class UserRepository {
     async getAllUsers() {
         try {
-            return await prisma.users.findMany();
+            return await prisma.users.findMany({
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    role: true,
+                    created_at: true,
+                    employee_details: {
+                        select: {
+                            emp_id: true,
+                            first_name: true,
+                            last_name: true,
+                            department_id: true,
+                            departments: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                            phone: true,
+                            mobile: true,
+                            designation: true,
+                            date_of_joining: true,
+                            date_of_birth: true,
+                            status: true,
+                            updated_at: true
+                        }
+                    }
+                }
+            });
         } catch (error) {
             logger.error(`Error fetching users: ${error.message}`);
             throw error;
@@ -109,6 +137,7 @@ class UserRepository {
         try {
             return await prisma.notifications.findMany({
                 where: { user_id: userId, is_read: false },
+                orderBy: { created_at: 'desc' },
                 select: {
                     id: true,
                     user_id: true,

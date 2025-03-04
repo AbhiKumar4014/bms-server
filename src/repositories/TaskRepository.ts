@@ -22,6 +22,15 @@ class TaskRepository {
                                 id: true,
                                 name: true,
                                 email: true,
+                                employee_details: {
+                                    select: {
+                                        first_name: true,
+                                        last_name: true,
+                                        designation: true,
+                                        department_id: true,
+                                        emp_id: true,
+                                    }
+                                }
                             },
                         }
                     },

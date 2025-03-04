@@ -9,7 +9,7 @@ const router = Router();
 router.get('/', authMiddleware, WorkLogController.listWorkLogs);
 router.get('/:id', authMiddleware, WorkLogController.getWorkLog);
 router.post('/', authMiddleware, WorkLogController.createWorkLog);
-router.put('/:id', authMiddleware, authorizeRole(["manager"]), WorkLogController.updateWorkLog);
+router.put('/:id', authMiddleware, authorizeRole(["manager", "consultant"]), WorkLogController.updateWorkLog);
 router.delete('/:id', authMiddleware, WorkLogController.deleteWorkLog);
 
 export default router;

@@ -33,7 +33,7 @@ class WorkLogController {
                 hours_worked: req.body.hours_worked,
                 work_date: req.body?.work_date,
                 task_id: req.body?.task_id,
-                comments: req.body?.comments,
+                notes: req.body?.notes,
             });
             res.status(201).json(workLog);
         } catch (error) {

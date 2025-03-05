@@ -4,7 +4,14 @@ import logger from '../utils/logger';
 
 class ProjectController {
     async listProjects(req: Request, res: Response) {
-        const projects = await ProjectRepository.getAllProjects();
+        let projects: any[] = [];
+        const role = req.user?.role;
+        if (role === 'admin') {
+            projects = await ProjectRepository.getAllProjects();
+        } else if (role === 'manager') {
+            projects = await ProjectRepository.getProjectsByDepartment(req.user?.id);
+            projects = projects.map((project) => project.projects);
+        }
         res.json(projects);
     }
 
@@ -41,4 +48,4 @@ class ProjectController {
     }
 }
 
-export default new ProjectController(); 
+export default new ProjectController();

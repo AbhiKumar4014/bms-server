@@ -98,7 +98,7 @@ class UserRepository {
                             contract_end_date: true,
                             resignation_date: true,
                             last_working_date: true,
-                            other_details: true,                            
+                            other_details: true,
                             updated_at: true
                         }
                     }
@@ -165,6 +165,7 @@ class UserRepository {
                     created_at: true,
                     employee_details: {
                         select: {
+                            id: true,
                             emp_id: true,
                             first_name: true,
                             last_name: true,
@@ -282,7 +283,7 @@ class UserRepository {
                             due_date: true,
                             created_at: true,
                             updated_at: true,
-                            assigned_by: true, 
+                            assigned_by: true,
                             tasks: {  // Fetch assigner details (assigned_by)
                                 select: {
                                     id: true,
@@ -330,7 +331,7 @@ class UserRepository {
                             due_date: true,
                             created_at: true,
                             updated_at: true,
-                            assigned_by: true, 
+                            assigned_by: true,
                             tasks: {  // Fetch assigner details (assigned_by)
                                 select: {
                                     id: true,
@@ -358,8 +359,6 @@ class UserRepository {
             throw error;
         }
     }
-    
-    
 }
 
-export default new UserRepository(); 
+export default new UserRepository();

@@ -6,6 +6,6 @@ import authorizeRole from '../middleware/authorizeRoleMiddleware';
 
 const router = Router();
 
-router.get('/', authMiddleware, authorizeRole(["admin", "manager"]), UserController.listUsersByRole);
+// router.get('/', authMiddleware, authorizeRole(["admin", "manager"]), UserController.listUsersByRole);
 
-export default router; 
+export default router;

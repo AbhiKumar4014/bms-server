@@ -7,6 +7,8 @@ import taskRoutes from './routes/taskRoutes';
 import departmentRoutes from './routes/departmentRoutes';
 import projectManagerRoutes from './routes/projectManagerRoutes';
 import taskAssignmentRoutes from './routes/taskAssignmentRoutes';
+import organizationRoutes from './routes/OrganizationRoutes';
+import designationRoutes from './routes/DesignationRoutes';
 import workLogRoutes from './routes/workLogRoutes';
 import authRoutes from './routes/authRoutes';
 import requestLogger from './middleware/requestLogger';
@@ -19,7 +21,6 @@ app.use(requestLogger);
 app.use(cors());
 
 app.use('/user', userRoutes);
-app.use('/consultant', consultantRoutes);
 app.use('/clients', clientRoutes);
 app.use('/projects', projectRoutes);
 app.use('/tasks', taskRoutes);
@@ -28,6 +29,8 @@ app.use('/project-managers', projectManagerRoutes);
 app.use('/task-assignment', taskAssignmentRoutes);
 app.use('/work-logs', workLogRoutes);
 app.use('/auth', authRoutes);
+app.use('/organizations', organizationRoutes);
+app.use('/designations', designationRoutes);
 
 process.on('uncaughtException', (error) => {
     logger.error(`Uncaught Exception: ${error.message}`);

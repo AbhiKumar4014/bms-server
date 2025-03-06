@@ -158,6 +158,41 @@ class UserRepository {
         try {
             return await prisma.users.findMany({
                 where: { role },
+                select: {
+                    id: true,
+                    email: true,
+                    role: true,
+                    created_at: true,
+                    employee_details: {
+                        select: {
+                            emp_id: true,
+                            first_name: true,
+                            last_name: true,
+                            department_id: true,
+                            departments: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                            designation: {
+                                select: {
+                                    name: true,
+                                }
+                            },
+                            organization: {
+                                select: {
+                                    name: true,
+                                }
+                            },
+                            phone: true,
+                            mobile: true,
+                            date_of_joining: true,
+                            date_of_birth: true,
+                            status: true,
+                            updated_at: true
+                        }
+                    }
+                }
             });
         } catch (error) {
             logger.error(`Error fetching user by email: ${error.message}`);

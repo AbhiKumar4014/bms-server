@@ -8,7 +8,6 @@ class UserRepository {
             return await prisma.users.findMany({
                 select: {
                     id: true,
-                    name: true,
                     email: true,
                     role: true,
                     created_at: true,
@@ -17,7 +16,7 @@ class UserRepository {
                             emp_id: true,
                             first_name: true,
                             last_name: true,
-                            department_id: true,
+                            gender: true,
                             departments: {
                                 select: {
                                     name: true,
@@ -25,7 +24,16 @@ class UserRepository {
                             },
                             phone: true,
                             mobile: true,
-                            designation: true,
+                            designation: {
+                                select: {
+                                    name: true,
+                                }
+                            },
+                            organization: {
+                                select: {
+                                    name: true,
+                                }
+                            },
                             date_of_joining: true,
                             date_of_birth: true,
                             status: true,
@@ -46,7 +54,6 @@ class UserRepository {
                 where: { id },
                 select: {
                     id: true,
-                    name: true,
                     email: true,
                     role: true,
                     created_at: true,
@@ -61,12 +68,37 @@ class UserRepository {
                                     name: true,
                                 },
                             },
+                            designation: {
+                                select: {
+                                    name: true,
+                                }
+                            },
+                            organization: {
+                                select: {
+                                    name: true,
+                                }
+                            },
                             phone: true,
                             mobile: true,
-                            designation: true,
                             date_of_joining: true,
                             date_of_birth: true,
                             status: true,
+                            father_name: true,
+                            blood_group: true,
+                            personal_email: true,
+                            gender: true,
+                            country: true,
+                            state: true,
+                            city: true,
+                            pincode: true,
+                            permanent_address: true,
+                            current_address: true,
+                            probation_period: true,
+                            notice_period: true,
+                            contract_end_date: true,
+                            resignation_date: true,
+                            last_working_date: true,
+                            other_details: true,                            
                             updated_at: true
                         }
                     }
@@ -126,6 +158,41 @@ class UserRepository {
         try {
             return await prisma.users.findMany({
                 where: { role },
+                select: {
+                    id: true,
+                    email: true,
+                    role: true,
+                    created_at: true,
+                    employee_details: {
+                        select: {
+                            emp_id: true,
+                            first_name: true,
+                            last_name: true,
+                            department_id: true,
+                            departments: {
+                                select: {
+                                    name: true,
+                                },
+                            },
+                            designation: {
+                                select: {
+                                    name: true,
+                                }
+                            },
+                            organization: {
+                                select: {
+                                    name: true,
+                                }
+                            },
+                            phone: true,
+                            mobile: true,
+                            date_of_joining: true,
+                            date_of_birth: true,
+                            status: true,
+                            updated_at: true
+                        }
+                    }
+                }
             });
         } catch (error) {
             logger.error(`Error fetching user by email: ${error.message}`);
@@ -219,7 +286,12 @@ class UserRepository {
                             tasks: {  // Fetch assigner details (assigned_by)
                                 select: {
                                     id: true,
-                                    name: true,
+                                    employee_details: {
+                                        select: {
+                                            first_name: true,
+                                            last_name: true
+                                        }
+                                    },
                                     email: true
                                 }
                             },
@@ -262,7 +334,12 @@ class UserRepository {
                             tasks: {  // Fetch assigner details (assigned_by)
                                 select: {
                                     id: true,
-                                    name: true,
+                                    employee_details: {
+                                        select: {
+                                            first_name: true,
+                                            last_name: true
+                                        }
+                                    },
                                     email: true
                                 }
                             },

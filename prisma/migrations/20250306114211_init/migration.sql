@@ -72,6 +72,22 @@ CREATE TABLE [dbo].[departments] (
 );
 
 -- CreateTable
+CREATE TABLE [dbo].[designation] (
+    [name] VARCHAR(100) NOT NULL,
+    [id] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [DF__designation__id__14270015] DEFAULT newid(),
+    [created_at] DATE CONSTRAINT [DF__designati__creat__151B244E] DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT [designation_pk] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- CreateTable
+CREATE TABLE [dbo].[organization] (
+    [id] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [DF__organization__id__0F624AF8] DEFAULT newid(),
+    [name] VARCHAR(100) NOT NULL,
+    [created_at] DATE CONSTRAINT [DF__organizat__creat__10566F31] DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT [organization_pk] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- CreateTable
 CREATE TABLE [dbo].[employee_details] (
     [id] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [DF__employee_det__id__339FAB6E] DEFAULT newid(),
     [user_id] UNIQUEIDENTIFIER NOT NULL,
@@ -79,13 +95,31 @@ CREATE TABLE [dbo].[employee_details] (
     [first_name] NVARCHAR(100) NOT NULL,
     [last_name] NVARCHAR(100) NOT NULL,
     [department_id] UNIQUEIDENTIFIER,
-    [designation] NVARCHAR(100),
     [date_of_joining] DATE,
     [date_of_birth] DATE,
     [phone] NVARCHAR(20),
     [mobile] NVARCHAR(20),
     [status] NVARCHAR(50) CONSTRAINT [DF__employee___statu__3587F3E0] DEFAULT 'active',
     [updated_at] DATETIME CONSTRAINT [DF__employee___updat__367C1819] DEFAULT CURRENT_TIMESTAMP,
+    [manager_id] UNIQUEIDENTIFIER NOT NULL,
+    [father_name] VARCHAR(100),
+    [blood_group] VARCHAR(100),
+    [personal_email] VARCHAR(100),
+    [gender] VARCHAR(100),
+    [country] VARCHAR(100),
+    [state] VARCHAR(100),
+    [city] VARCHAR(100),
+    [pincode] VARCHAR(100),
+    [permanent_address] TEXT,
+    [current_address] TEXT,
+    [probation_period] VARCHAR(100),
+    [notice_period] VARCHAR(100),
+    [contract_end_date] DATE,
+    [resignation_date] DATE,
+    [last_working_date] DATE,
+    [other_details] TEXT,
+    [organization_id] UNIQUEIDENTIFIER,
+    [designation_id] UNIQUEIDENTIFIER,
     CONSTRAINT [PK__employee__3213E83F9A21632D] PRIMARY KEY CLUSTERED ([id]),
     CONSTRAINT [UQ__employee__B9BE370E5024E68E] UNIQUE NONCLUSTERED ([user_id]),
     CONSTRAINT [UQ__employee__1299A860B3E4EF35] UNIQUE NONCLUSTERED ([emp_id])
@@ -155,7 +189,7 @@ CREATE TABLE [dbo].[task_assignments] (
     [task_id] UNIQUEIDENTIFIER NOT NULL,
     [user_id] UNIQUEIDENTIFIER NOT NULL,
     [assigned_at] DATETIME CONSTRAINT [DF__task_assi__assig__5BE2A6F2] DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT [PK__task_ass__3213E83FAA01D450] PRIMARY KEY CLUSTERED ([id])
+    CONSTRAINT [task_assignments_pk] PRIMARY KEY CLUSTERED ([task_id],[user_id])
 );
 
 -- CreateTable
@@ -182,13 +216,13 @@ CREATE TABLE [dbo].[tasks] (
     [due_date] DATE,
     [created_at] DATETIME CONSTRAINT [DF__tasks__created_a__5535A963] DEFAULT CURRENT_TIMESTAMP,
     [updated_at] DATETIME CONSTRAINT [DF__tasks__updated_a__5629CD9C] DEFAULT CURRENT_TIMESTAMP,
+    [assigned_by] UNIQUEIDENTIFIER,
     CONSTRAINT [PK__tasks__3213E83F4A856E34] PRIMARY KEY CLUSTERED ([id])
 );
 
 -- CreateTable
 CREATE TABLE [dbo].[users] (
     [id] UNIQUEIDENTIFIER NOT NULL CONSTRAINT [DF__users__id__3E52440B] DEFAULT newid(),
-    [name] NVARCHAR(255) NOT NULL,
     [email] NVARCHAR(255) NOT NULL,
     [password_hash] NVARCHAR(max) NOT NULL,
     [role] NVARCHAR(50) NOT NULL,
@@ -206,7 +240,10 @@ CREATE TABLE [dbo].[work_logs] (
     [hours_worked] DECIMAL(5,2) NOT NULL,
     [work_date] DATE NOT NULL CONSTRAINT [DF__work_logs__work___1332DBDC] DEFAULT CURRENT_TIMESTAMP,
     [comments] NVARCHAR(255),
-    CONSTRAINT [PK__work_log__3213E83FFF39462A] PRIMARY KEY CLUSTERED ([id])
+    [status] VARCHAR(20) NOT NULL CONSTRAINT [DF__work_logs__statu__14270015] DEFAULT 'Pending',
+    [notes] VARCHAR(100),
+    CONSTRAINT [PK__work_log__3213E83FFF39462A] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [work_logs_user_date_unique] UNIQUE NONCLUSTERED ([user_id],[work_date])
 );
 
 -- AddForeignKey
@@ -214,6 +251,15 @@ ALTER TABLE [dbo].[attachments] ADD CONSTRAINT [fk_attachments_user] FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE [dbo].[audit_logs] ADD CONSTRAINT [fk_audit_logs_user] FOREIGN KEY ([performed_by]) REFERENCES [dbo].[users]([id]) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[employee_details] ADD CONSTRAINT [employee_details_designation_FK] FOREIGN KEY ([designation_id]) REFERENCES [dbo].[designation]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[employee_details] ADD CONSTRAINT [employee_details_organization_FK] FOREIGN KEY ([organization_id]) REFERENCES [dbo].[organization]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[employee_details] ADD CONSTRAINT [employee_manager_FK] FOREIGN KEY ([manager_id]) REFERENCES [dbo].[employee_details]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[employee_details] ADD CONSTRAINT [fk_employee_department] FOREIGN KEY ([department_id]) REFERENCES [dbo].[departments]([id]) ON DELETE SET NULL ON UPDATE NO ACTION;
@@ -256,6 +302,9 @@ ALTER TABLE [dbo].[tasks] ADD CONSTRAINT [fk_tasks_project] FOREIGN KEY ([projec
 
 -- AddForeignKey
 ALTER TABLE [dbo].[tasks] ADD CONSTRAINT [fk_tasks_user] FOREIGN KEY ([assigned_to]) REFERENCES [dbo].[users]([id]) ON DELETE SET NULL ON UPDATE NO ACTION;
+
+-- AddForeignKey
+ALTER TABLE [dbo].[tasks] ADD CONSTRAINT [tasks_tasks_FK] FOREIGN KEY ([assigned_by]) REFERENCES [dbo].[users]([id]) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- AddForeignKey
 ALTER TABLE [dbo].[work_logs] ADD CONSTRAINT [fk_work_logs_project] FOREIGN KEY ([project_id]) REFERENCES [dbo].[projects]([id]) ON DELETE CASCADE ON UPDATE NO ACTION;

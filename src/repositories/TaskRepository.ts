@@ -20,7 +20,6 @@ class TaskRepository {
                         users: {
                             select: {
                                 id: true,
-                                name: true,
                                 email: true,
                                 employee_details: {
                                     select: {
@@ -44,7 +43,15 @@ class TaskRepository {
                 tasks: {
                     select: {
                         id: true,
-                        name: true,
+                        employee_details: {
+                            select: {
+                                first_name: true,
+                                last_name: true,
+                                designation: true,
+                                department_id: true,
+                                emp_id: true,
+                            }
+                        }
                     }
                 },
                 project_id: true,

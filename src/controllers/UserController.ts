@@ -10,12 +10,22 @@ class UserController {
             const user = await UserRepository.getUserById(id);
             if (user.role === "admin") {
                 const users = await UserRepository.getAllUsers();
-                res.json(users);
+                const formatedUsers = users.map((user) => {
+                    const {designation, departments, organization} = user?.employee_details;
+                    delete user?.employee_details?.departments;
+                    delete user?.employee_details?.designation;
+                    delete user?.employee_details?.organization;
+                    user?.employee_details?.designation = designation?.name;
+                    user?.employee_details?.department = departments?.name;
+                    user?.employee_details?.organization = organization?.name;
+                    return user;
+                });
+                return res.json(formatedUsers);
             }
             return res.status(403).json({ error: "you don't have permission to access this." });
         } catch (error) {
             logger.error(`Error listing users: ${error.message}`);
-            res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({ error: 'Internal server error' });
         }
     }
 
@@ -26,6 +36,19 @@ class UserController {
             if (!user) {
                 return res.status(404).json({ error: `User with ID ${id} not found.` });
             }
+            const {designation, departments, organization} = user?.employee_details;
+            delete user.employee_details.departments;
+            delete user.employee_details.designation;
+            delete user.employee_details.organization;
+            user.employee_details.designation = designation?.name;
+            user.employee_details.department = departments?.name;
+            user.employee_details.organization = organization?.name;
+            // const formatedUser = {
+            //         designation: user?.employee_details?.designation?.name,
+            //         department: user?.employee_details?.departments?.name,
+            //         organization: user?.employee_details?.organization?.name,
+            //         ...user
+            //     }
             res.json(user);
         } catch (error) {
             logger.error(`Error in getUser: ${error.message}`);

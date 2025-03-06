@@ -3,6 +3,7 @@ import UserController from '../controllers/UserController';
 import validateUUID from '../middleware/validateUUID';
 import authMiddleware from '../middleware/authMiddleware';
 import authorizeRole from '../middleware/authorizeRoleMiddleware';
+import EmployeeController from '../controllers/EmployeeController';
 
 const router = Router();
 
@@ -17,5 +18,6 @@ router.put('/:id', authMiddleware, UserController.updateUser);
 router.delete('/:id', authMiddleware, UserController.deleteUser);
 router.get('/tasks/assigned', authMiddleware, UserController.getAssignedTasks);
 router.get('/tasks/assigned/all', authMiddleware, authorizeRole(["admin", "manager"]), UserController.getAllAssignedTasks);
+router.get('/hierarchy', authMiddleware, EmployeeController.getEmployeeHeirarchy);
 
-export default router; 
+export default router;

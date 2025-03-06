@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/dbConfig';
 import { TaskAssignmentData } from '../types/taskAssignmentTypes';
-
-const prisma = new PrismaClient();
 
 class TaskAssignmentRepository {
     async getAllTaskAssignments() {
@@ -34,4 +32,4 @@ class TaskAssignmentRepository {
     }
 }
 
-export default new TaskAssignmentRepository(); 
+export default new TaskAssignmentRepository();

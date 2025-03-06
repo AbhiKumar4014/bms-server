@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/dbConfig';
 import { ProjectManagerData } from '../types/projectManagerTypes';
-
-const prisma = new PrismaClient();
 
 class ProjectManagerRepository {
     async getAllProjectManagers() {
@@ -34,4 +32,4 @@ class ProjectManagerRepository {
     }
 }
 
-export default new ProjectManagerRepository(); 
+export default new ProjectManagerRepository();

@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/dbConfig';
 import { ClientData } from '../types/clientTypes';
 
-const prisma = new PrismaClient();
 
 class ClientRepository {
     async getAllClients() {
@@ -34,4 +33,4 @@ class ClientRepository {
     }
 }
 
-export default new ClientRepository(); 
+export default new ClientRepository();

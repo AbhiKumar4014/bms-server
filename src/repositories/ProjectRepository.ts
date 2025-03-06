@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/dbConfig';
 import { ProjectData } from '../types/projectTypes';
-
-const prisma = new PrismaClient();
 
 class ProjectRepository {
     async getAllProjects() {

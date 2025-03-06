@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import {prisma} from '../config/dbConfig';
 import { TaskData } from '../types/taskTypes';
-
-const prisma = new PrismaClient();
 
 class TaskRepository {
     async getAllTasks() {
@@ -90,4 +88,4 @@ class TaskRepository {
     }
 }
 
-export default new TaskRepository(); 
+export default new TaskRepository();

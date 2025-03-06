@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/dbConfig';
 import { DepartmentData } from '../types/departmentTypes';
-
-const prisma = new PrismaClient();
 
 class DepartmentRepository {
     async getAllDepartments() {

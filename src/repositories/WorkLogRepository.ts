@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../config/dbConfig';
 import { WorkLogData } from '../types/workLogTypes';
-
-const prisma = new PrismaClient();
 
 class WorkLogRepository {
     async getAllWorkLogs() {

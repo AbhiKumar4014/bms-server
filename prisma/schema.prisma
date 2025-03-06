@@ -78,6 +78,13 @@ model designation {
   employee_details employee_details[]
 }
 
+model organization {
+  id               String             @id(map: "organization_pk") @default(dbgenerated("newid()"), map: "DF__organization__id__0F624AF8") @db.UniqueIdentifier
+  name             String             @db.VarChar(100)
+  created_at       DateTime?          @default(now(), map: "DF__organizat__creat__10566F31") @db.Date
+  employee_details employee_details[]
+}
+
 model employee_details {
   id                     String             @id(map: "PK__employee__3213E83F9A21632D") @default(dbgenerated("newid()"), map: "DF__employee_det__id__339FAB6E") @db.UniqueIdentifier
   user_id                String             @unique(map: "UQ__employee__B9BE370E5024E68E") @db.UniqueIdentifier
@@ -125,13 +132,6 @@ model notifications {
   is_read    Boolean?  @default(false, map: "DF__notificat__is_re__1F98B2C1")
   created_at DateTime? @default(now(), map: "DF__notificat__creat__208CD6FA") @db.DateTime
   users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_notifications_user")
-}
-
-model organization {
-  id               String             @id(map: "organization_pk") @default(dbgenerated("newid()"), map: "DF__organization__id__0F624AF8") @db.UniqueIdentifier
-  name             String             @db.VarChar(100)
-  created_at       DateTime?          @default(now(), map: "DF__organizat__creat__10566F31") @db.Date
-  employee_details employee_details[]
 }
 
 model project_managers {
@@ -206,25 +206,25 @@ model task_status_history {
 }
 
 model tasks {
-  id                             String                @id(map: "PK__tasks__3213E83F4A856E34") @default(dbgenerated("newid()"), map: "DF__tasks__id__52593CB8") @db.UniqueIdentifier
-  project_id                     String                @db.UniqueIdentifier
-  title                          String                @db.NVarChar(255)
-  description                    String                @db.Text
-  status                         String                @db.NVarChar(50)
-  priority                       String                @db.NVarChar(50)
-  assigned_to                    String?               @db.UniqueIdentifier
-  estimated_hours                Decimal?              @db.Decimal(5, 2)
-  start_date                     DateTime?             @db.Date
-  due_date                       DateTime?             @db.Date
-  created_at                     DateTime?             @default(now(), map: "DF__tasks__created_a__5535A963") @db.DateTime
-  updated_at                     DateTime?             @default(now(), map: "DF__tasks__updated_a__5629CD9C") @db.DateTime
-  assigned_by                    String?               @db.UniqueIdentifier
-  task_assignments               task_assignments[]
-  task_status_history            task_status_history[]
-  projects                       projects              @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_tasks_project")
-  users_tasks_assigned_toTousers users?                @relation("tasks_assigned_toTousers", fields: [assigned_to], references: [id], onUpdate: NoAction, map: "fk_tasks_user")
-  users_tasks_assigned_byTousers users?                @relation("tasks_assigned_byTousers", fields: [assigned_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tasks_tasks_FK")
-  work_logs                      work_logs[]
+  id                  String                @id(map: "PK__tasks__3213E83F4A856E34") @default(dbgenerated("newid()"), map: "DF__tasks__id__52593CB8") @db.UniqueIdentifier
+  project_id          String                @db.UniqueIdentifier
+  title               String                @db.NVarChar(255)
+  description         String                @db.Text
+  status              String                @db.NVarChar(50)
+  priority            String                @db.NVarChar(50)
+  assigned_to         String?               @db.UniqueIdentifier
+  estimated_hours     Decimal?              @db.Decimal(5, 2)
+  start_date          DateTime?             @db.Date
+  due_date            DateTime?             @db.Date
+  created_at          DateTime?             @default(now(), map: "DF__tasks__created_a__5535A963") @db.DateTime
+  updated_at          DateTime?             @default(now(), map: "DF__tasks__updated_a__5629CD9C") @db.DateTime
+  assigned_by         String?               @db.UniqueIdentifier
+  task_assignments    task_assignments[]
+  task_status_history task_status_history[]
+  projects            projects              @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_tasks_project")
+  users               users?                @relation(fields: [assigned_to], references: [id], onUpdate: NoAction, map: "fk_tasks_user")
+  tasks               users?                @relation("tasksTotasks", fields: [assigned_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tasks_tasks_FK")
+  work_logs           work_logs[]
 }
 
 model users {
@@ -241,8 +241,8 @@ model users {
   project_managers_project_managers_user_idTousers       project_managers[]    @relation("project_managers_user_idTousers")
   task_assignments                                       task_assignments[]
   task_status_history                                    task_status_history[]
-  tasks_tasks_assigned_toTousers                         tasks[]               @relation("tasks_assigned_toTousers")
-  tasks_tasks_assigned_byTousers                         tasks[]               @relation("tasks_assigned_byTousers")
+  tasks                                                  tasks[]
+  other_tasks                                            tasks[]               @relation("tasksTotasks")
   work_logs                                              work_logs[]
 }
 
@@ -255,6 +255,7 @@ model work_logs {
   work_date    DateTime @default(now(), map: "DF__work_logs__work___1332DBDC") @db.Date
   comments     String?  @db.NVarChar(255)
   status       String   @default("Pending", map: "DF__work_logs__statu__14270015") @db.VarChar(20)
+  notes        String?  @db.VarChar(100)
   projects     projects @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_work_logs_project")
   tasks        tasks?   @relation(fields: [task_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_work_logs_task")
   users        users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_work_logs_user")

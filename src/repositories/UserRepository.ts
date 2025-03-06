@@ -251,7 +251,12 @@ class UserRepository {
                             tasks: {  // Fetch assigner details (assigned_by)
                                 select: {
                                     id: true,
-                                    name: true,
+                                    employee_details: {
+                                        select: {
+                                            first_name: true,
+                                            last_name: true
+                                        }
+                                    },
                                     email: true
                                 }
                             },
@@ -294,7 +299,12 @@ class UserRepository {
                             tasks: {  // Fetch assigner details (assigned_by)
                                 select: {
                                     id: true,
-                                    name: true,
+                                    employee_details: {
+                                        select: {
+                                            first_name: true,
+                                            last_name: true
+                                        }
+                                    },
                                     email: true
                                 }
                             },

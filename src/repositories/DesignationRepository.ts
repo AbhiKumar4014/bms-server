@@ -1,4 +1,4 @@
-import { prisma } from "../config/dbConfig";
+import { prisma } from '../app';
 
 class DesignationRepository {
     async getDesignations() {

@@ -1,4 +1,4 @@
-import { prisma } from '../config/dbConfig';
+import { prisma } from '../app';
 import { ProjectData } from '../types/projectTypes';
 
 class ProjectRepository {

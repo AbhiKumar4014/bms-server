@@ -1,6 +1,5 @@
-import { prisma } from '../config/dbConfig';
+import { prisma } from '../app';
 import { ClientData } from '../types/clientTypes';
-
 
 class ClientRepository {
     async getAllClients() {

@@ -19,5 +19,6 @@ router.delete('/:id', authMiddleware, UserController.deleteUser);
 router.get('/tasks/assigned', authMiddleware, UserController.getAssignedTasks);
 router.get('/tasks/assigned/all', authMiddleware, authorizeRole(["admin", "manager"]), UserController.getAllAssignedTasks);
 router.get('/hierarchy', authMiddleware, EmployeeController.getEmployeeHeirarchy);
+router.get('/org-chart', authMiddleware, EmployeeController.getOrganizationChart);
 
 export default router;

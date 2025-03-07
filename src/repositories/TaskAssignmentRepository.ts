@@ -1,4 +1,4 @@
-import { prisma } from '../config/dbConfig';
+import { prisma } from '../app';
 import { TaskAssignmentData } from '../types/taskAssignmentTypes';
 
 class TaskAssignmentRepository {

@@ -13,9 +13,11 @@ import workLogRoutes from './routes/workLogRoutes';
 import authRoutes from './routes/authRoutes';
 import requestLogger from './middleware/requestLogger';
 import logger from './utils/logger';
+import { getPrismaClient } from './config/dbConfig';
 import cors from 'cors';
 import path from 'path';
 
+const prisma = getPrismaClient();
 const app = express();
 app.use(express.json());
 app.use(requestLogger);
@@ -43,4 +45,4 @@ process.on('unhandledRejection', (reason, promise) => {
     logger.error(`Unhandled Rejection at: ${promise} reason: , ${reason}`);
 });
 
-export default app;
+export { app, prisma };

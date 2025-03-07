@@ -28,4 +28,3 @@ export function buildHierarchy(result: any) {
 
     return hierarchy;
 }
-

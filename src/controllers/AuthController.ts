@@ -6,22 +6,22 @@ import config from '../config';
 import bcrypt from "bcrypt"; // Import bcrypt
 
 class AuthController {
-    async register(req: Request, res: Response) {
-        try {
-            const { name, email, password, role } = req.body;
-            logger.info({name, email, password, role});
-        if (!password) {
-            return res.status(400).json({ error: "Password is required" });
-        }
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
-            const user = await UserRepository.createUser({name, email, password_hash: hashedPassword, role: role? role: "consultant"});
-            res.status(201).json(user);
-        } catch (error) {
-            logger.error(`Error registering user: ${error.message}`);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    }
+    // async register(req: Request, res: Response) {
+    //     try {
+    //         const { name, email, password, role } = req.body;
+    //         logger.info({name, email, password, role});
+    //     if (!password) {
+    //         return res.status(400).json({ error: "Password is required" });
+    //     }
+    //     // Hash the password
+    //     const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+    //         const user = await UserRepository.createUser({name, email, password_hash: hashedPassword, role: role? role: "consultant"});
+    //         res.status(201).json(user);
+    //     } catch (error) {
+    //         logger.error(`Error registering user: ${error.message}`);
+    //         res.status(500).json({ error: 'Internal server error' });
+    //     }
+    // }
 
     async login(req: Request, res: Response) {
         try {
@@ -56,4 +56,4 @@ class AuthController {
     }
 }
 
-export default new AuthController(); 
+export default new AuthController();

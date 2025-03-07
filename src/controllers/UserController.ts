@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import UserRepository from '../repositories/UserRepository';
 import { AuthenticatedRequest } from '../types/RequestTypes';
+import bcrypt from 'bcrypt';
 import logger from '../utils/logger';
+import sendMail from '../utils/sendMail';
 
 class UserController {
     async listUsers(req: AuthenticatedRequest, res: Response) {
@@ -22,15 +24,19 @@ class UserController {
                 const user = await UserRepository.getUserById(id);
                 if (user.role === "admin") {
                     const users = await UserRepository.getAllUsers();
-                    const formatedUsers = users.map((user) => {
-                        const { designation, departments, organization } = user?.employee_details;
-                        delete user?.employee_details?.departments;
-                        delete user?.employee_details?.designation;
-                        delete user?.employee_details?.organization;
-                        user?.employee_details?.designation = designation?.name;
-                        user?.employee_details?.department = departments?.name;
-                        user?.employee_details?.organization = organization?.name;
-                        return user;
+                    let formatedUsers = users?.map((user) => {
+                        const { employee_details } = user;
+                        if (!employee_details) {
+                            return user;
+                        }
+                            const { designation, departments, organization } = user?.employee_details;
+                            delete user?.employee_details?.departments;
+                            delete user?.employee_details?.designation;
+                            delete user?.employee_details?.organization;
+                            user?.employee_details?.designation = designation?.name;
+                            user?.employee_details?.department = departments?.name;
+                            user?.employee_details?.organization = organization?.name;
+                            return user;
                     });
                     return res.json(formatedUsers);
                 }
@@ -71,8 +77,50 @@ class UserController {
 
     async createUser(req: Request, res: Response) {
         try {
-            const user = await UserRepository.createUser(req.body);
-            res.status(201).json(user);
+            const userData = req.body;
+            const passwordHash = await bcrypt.hash(userData.password, 10)
+            const newUser = {
+                user: {
+                    email: userData?.personal_email,
+                    password_hash: passwordHash,
+                    role: userData.role,
+                },
+                employee_details: {
+                    emp_id: userData?.emp_id,
+                    first_name: userData?.first_name,
+                    last_name: userData?.last_name,
+                    department_id: userData.department_id || null,
+                    designation_id: userData.designation_id || null,
+                    organization_id: userData.organization_id || null,
+                    phone: userData.phone,
+                    mobile: userData.mobile,
+                    date_of_joining: userData.date_of_joining ? new Date(userData.date_of_joining) : null,
+                    date_of_birth: userData.date_of_birth ? new Date(userData.date_of_birth) : null,
+                    status: userData.status,
+                    personal_email: userData.personal_email,
+                    gender: userData.gender || null,
+                    country: userData.country,
+                    state: userData.state,
+                    city: userData.city,
+                    pincode: userData.pincode,
+                    permanent_address: userData.permanent_address,
+                    current_address: userData.current_address,
+                    probation_period: userData.probation_period,
+                    notice_period: userData.notice_period,
+                    father_name: userData.father_name,
+                    contract_end_date: userData.contract_end_date ? new Date(userData.contract_end_date) : null,
+                    resignation_date: userData.resignation_date ? new Date(userData.resignation_date) : null,
+                    last_working_date: userData.last_working_date ? new Date(userData.last_working_date) : null,
+                    other_details: userData.other_details || "",
+                    manager_id: userData.manager_id || null,
+                    blood_group: userData.blood_group,
+                }
+            }
+            const user = await UserRepository.createUser(newUser);
+            if (user) {
+                sendMail(userData);
+            }
+            res.status(201).json({ user, "message": "Employee registered successfully" });
         } catch (error) {
             logger.error(`Error creating user: ${error.message}`);
             res.status(500).json({ error: 'Internal server error' });
@@ -226,6 +274,7 @@ class UserController {
             res.status(500).json({ error: 'Internal server error' });
         }
     }
+
 
 }
 

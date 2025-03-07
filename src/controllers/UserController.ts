@@ -78,10 +78,11 @@ class UserController {
     async createUser(req: Request, res: Response) {
         try {
             const userData = req.body;
+            logger.info({ data: userData, msg: "Create" });
             const passwordHash = await bcrypt.hash(userData.password, 10)
             const newUser = {
                 user: {
-                    email: userData?.personal_email,
+                    email: userData?.company_email,
                     password_hash: passwordHash,
                     role: userData.role,
                 },

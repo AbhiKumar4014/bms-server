@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import EmployeeRepository from '../repositories/EmployeeRepository';
-import { buildHierarchy } from '../utils/helper';
+import { buildEmployeeHierarchy, buildHierarchy } from '../utils/helper';
 import logger from '../utils/logger';
 
 class EmployeeController {
@@ -24,6 +24,32 @@ class EmployeeController {
 
             return res.status(500).json({ error: "Internal Server Error" });
             // throw error;
+        }
+    }
+
+    async getOrganizationHeirachy(req: Request, res: Response) {
+        const userId = req.query?.user_id as string;
+        let response;
+        try {
+            response = await EmployeeRepository.getEmployeeHierarchy(userId);
+            return res.json(response);
+        } catch (error) {
+            logger.error(`Error fetching employee hierarchy: ${error}`);
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+
+    async getOrganizationChart(req: Request, res: Response) {
+        const userId = req.query?.emp_id as string;
+        let response;
+        try {
+            response = await EmployeeRepository.getOrganizationHierarchy(userId);
+            const modifiedResponse = buildHierarchy(response);
+            console.log(modifiedResponse)
+            return res.json(modifiedResponse);
+        } catch (error) {
+            logger.error(`Error fetching employee hierarchy: ${error}`);
+            return res.status(500).json({ error: "Internal Server Error" });
         }
     }
 

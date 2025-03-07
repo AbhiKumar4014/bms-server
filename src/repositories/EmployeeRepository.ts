@@ -1,4 +1,4 @@
-import { prisma } from "../config/dbConfig";
+import { prisma } from '../app';
 
 class EmployeeRepository {
   async getEmployeeById(employeeId: string) {
@@ -20,7 +20,6 @@ class EmployeeRepository {
 
   async getEmployeeHierarchy(userId: string) {
     try {
-
       const result = await prisma.$queryRaw`
         WITH EmployeeHierarchy AS (
             -- Base case: Start with the given employee, Level 1
@@ -78,15 +77,72 @@ class EmployeeRepository {
         INNER JOIN users u ON e.user_id = u.id
         WHERE e.id = e.manager_id;
         `;
-
-      console.log(result);
-
       return result;
     } catch (error) {
       console.error("Error fetching employee hierarchy:", error);
       throw new Error("Failed to fetch employee hierarchy");
     }
   }
+
+  async getOrganizationHierarchy(empId: string) {
+    try {
+      const result = await prisma.$queryRaw`
+       WITH EmployeeHierarchy AS (
+            -- Base case: Select the given employee
+            SELECT
+                id, emp_id, first_name, last_name, manager_id, designation_id, user_id
+            FROM employee_details
+            WHERE emp_id=${empId}
+
+            UNION ALL
+
+            -- Recursive case: Select subordinates
+            SELECT
+                e.id, e.emp_id, e.first_name, e.last_name, e.manager_id, e.designation_id, e.user_id
+            FROM employee_details e
+            INNER JOIN EmployeeHierarchy eh ON e.manager_id = eh.id AND e.id <> eh.id
+        ),
+        ManagerHierarchy AS (
+            -- Base case: Select the given employee
+            SELECT
+                id, emp_id, first_name, last_name, manager_id, designation_id, user_id
+            FROM employee_details
+            WHERE emp_id=${empId}
+
+            UNION ALL
+
+            -- Recursive case: Select managers
+            SELECT
+                e.id, e.emp_id, e.first_name, e.last_name, e.manager_id, e.designation_id, e.user_id
+            FROM employee_details e
+            INNER JOIN ManagerHierarchy mh ON mh.manager_id = e.id AND mh.id <> e.id
+        )
+        -- Perform LEFT JOINs after recursion
+        SELECT
+            eh.id,
+            eh.emp_id,
+            eh.first_name,
+            eh.last_name,
+            eh.manager_id,
+            d.name AS designation_name,
+            u.email
+        FROM (
+            SELECT * FROM EmployeeHierarchy
+            UNION
+            SELECT * FROM ManagerHierarchy
+        ) eh
+        LEFT JOIN designation d ON eh.designation_id = d.id
+        LEFT JOIN users u ON eh.user_id = u.id
+        OPTION (MAXRECURSION 500);
+
+        `;
+      return result;
+    } catch (error) {
+      console.error("Error fetching employee hierarchy:", error);
+      throw new Error("Failed to fetch employee hierarchy");
+    }
+  }
+
 }
 
 export default new EmployeeRepository();

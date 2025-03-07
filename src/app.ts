@@ -14,12 +14,14 @@ import authRoutes from './routes/authRoutes';
 import requestLogger from './middleware/requestLogger';
 import logger from './utils/logger';
 import cors from 'cors';
+import path from 'path';
 
 const app = express();
 app.use(express.json());
 app.use(requestLogger);
 app.use(cors());
 
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/user', userRoutes);
 app.use('/clients', clientRoutes);
 app.use('/projects', projectRoutes);

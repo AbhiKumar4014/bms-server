@@ -111,17 +111,6 @@ class UserRepository {
         }
     }
 
-    async createUser(userData: UserData) {
-        try {
-            return await prisma.users.create({
-                data: userData,
-            });
-        } catch (error) {
-            logger.error(`Error creating user: ${error.message}`);
-            throw error;
-        }
-    }
-
     async updateUser(id: string, userData: Partial<UserData>) {
         try {
             return await prisma.users.update({
@@ -249,7 +238,7 @@ class UserRepository {
         }
     }
 
-    async createNotification (userId: string, message: string) {
+    async createNotification(userId: string, message: string) {
         try {
             return await prisma.notifications.create({
                 data: {
@@ -359,6 +348,32 @@ class UserRepository {
             throw error;
         }
     }
+
+
+    async createUser(userData: {user: any, employee_details: any}) {
+        try {
+            const result = await prisma.$transaction(async (prisma) => {
+                const createdUser = await prisma.users.create({
+                    data: {
+                        ... userData?.user,
+                        employee_details: {
+                            create: {
+                                ... userData?.employee_details
+                            }
+                        }
+                    },
+                });
+                return createdUser;
+            });
+            return result;
+        } catch (error) {
+            console.error("Error creating user:", error);
+            throw new Error("User creation failed.");
+        }
+    }
+
+
+
 }
 
 export default new UserRepository();

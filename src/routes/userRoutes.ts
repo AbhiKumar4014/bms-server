@@ -13,7 +13,7 @@ router.get('/notifications', authMiddleware, UserController.getNotifications);
 router.get('/notifications/history', authMiddleware, UserController.getNotificationsHistory);
 router.put('/notification/:id', authMiddleware, UserController.updateNotification);
 router.post('/notification/', authMiddleware, authorizeRole(["admin", "manager"]), UserController.createNotification);
-router.post('/', authMiddleware, UserController.createUser);
+router.post('/', authMiddleware, authorizeRole(["admin"]), UserController.createUser);
 router.put('/:id', authMiddleware, UserController.updateUser);
 router.delete('/:id', authMiddleware, UserController.deleteUser);
 router.get('/tasks/assigned', authMiddleware, UserController.getAssignedTasks);

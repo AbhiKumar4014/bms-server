@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import logger from '../utils/logger';
 
-const getPrismaClient = () => {
+export const getPrismaClient = () => {
 
     try {
         const prisma = new PrismaClient({
@@ -28,4 +28,3 @@ const getPrismaClient = () => {
     }
 };
 
-export const prisma = getPrismaClient();

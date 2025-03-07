@@ -1,7 +1,8 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import logger from '../utils/logger';
 
 const getPrismaClient = () => {
+
     try {
         const prisma = new PrismaClient({
             datasources: {
@@ -27,5 +28,4 @@ const getPrismaClient = () => {
     }
 };
 
-export const prisma = getPrismaClient(); 
-
+export const prisma = getPrismaClient();

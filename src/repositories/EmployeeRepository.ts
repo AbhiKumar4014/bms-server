@@ -124,7 +124,7 @@ class EmployeeRepository {
             eh.first_name,
             eh.last_name,
             eh.manager_id,
-            d.name AS designation_name,
+            d.name AS designation,
             u.email
         FROM (
             SELECT * FROM EmployeeHierarchy

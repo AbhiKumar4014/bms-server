@@ -1,10 +1,12 @@
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import logger from '../utils/logger';
 
-export const getPrismaClient = () => {
+// Create a single instance of PrismaClient
+let prisma: PrismaClient;
 
-    try {
-        const prisma = new PrismaClient({
+export const getPrismaClient = () => {
+    if (!prisma) {
+        prisma = new PrismaClient({
             datasources: {
                 db: {
                     url: process.env.DATABASE_URL,
@@ -21,10 +23,6 @@ export const getPrismaClient = () => {
         });
 
         logger.info('Prisma client initialized successfully.');
-        return prisma;
-    } catch (error) {
-        logger.error(`Database Connection Error: ${error.message}`);
-        throw error;
     }
+    return prisma;
 };
-

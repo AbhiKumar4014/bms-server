@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "sqlserver"
   url      = env("DATABASE_URL")
+  connectionLimit = 100
 }
 
 model attachments {
